@@ -39,7 +39,7 @@ if not cap.isOpened():
 
 #   Game Constants
     #   Pygame Framerate
-GAME_FPS = 120
+GAME_FPS = 60
     #   Pygame Background Color
 BACKGROUND_COLOR = (255, 255, 255)
     #   Player Movement and Enemy Movement Speed
@@ -518,16 +518,37 @@ class Objective:
         screen.blit(self.image, self.rect)
 
 #   Enemy Class
-      
+
+scaled_spawn_image = pygame.transform.scale(enemy_spawn, (100, 100))
+scaled_death_image = pygame.transform.scale(enemy_death, (100, 100))
+scaled_walk_left_image = pygame.transform.scale(enemy_move_left, (100, 100))
+scaled_walk_right_image = pygame.transform.scale(enemy_move_right, (100, 100))
+
 class Enemy:
     def __init__(self):
-        self.spawn_image = pygame.transform.scale(enemy_spawn, (100, 100))
-        self.death_image = pygame.transform.scale(enemy_death, (100, 100))
-        self.walk_left_image = pygame.transform.scale(enemy_move_left, (100, 100))
-        self.walk_right_image = pygame.transform.scale(enemy_move_right, (100, 100))
-        self.image = self.spawn_image  # Initialize with the spawn image
-        
-        self.rect = pygame.Rect(random.randint(0, screen_width - 100), random.randint(0, screen_height - 100), 75, 75)
+        self.spawn_image = scaled_spawn_image
+        self.death_image = scaled_death_image
+        self.walk_left_image = scaled_walk_left_image
+        self.walk_right_image = scaled_walk_right_image
+        self.image = self.spawn_image
+
+        # Choose a random quadrant to spawn in
+        spawn_quadrant = random.randint(1, 4)
+
+        if spawn_quadrant == 1: # Top-left quadrant
+            spawn_x = random.randint(0, screen_width // 2 - 100)
+            spawn_y = random.randint(0, screen_height // 2 - 100)
+        elif spawn_quadrant == 2: # Top-right quadrant
+            spawn_x = random.randint(screen_width // 2, screen_width - 100)
+            spawn_y = random.randint(0, screen_height // 2 - 100)
+        elif spawn_quadrant == 3: # Bottom-left quadrant
+            spawn_x = random.randint(0, screen_width // 2 - 100)
+            spawn_y = random.randint(screen_height // 2, screen_height - 100)
+        else: # Bottom-right quadrant (spawn_quadrant == 4)
+            spawn_x = random.randint(screen_width // 2, screen_width - 100)
+            spawn_y = random.randint(screen_height // 2, screen_height - 100)
+
+        self.rect = pygame.Rect(spawn_x, spawn_y, 75, 75)
         
         self.is_alive = True  # Flag to track if the enemy is alive
         
